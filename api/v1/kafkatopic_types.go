@@ -20,25 +20,30 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// KafkaTopicSpec defines the desired state of KafkaTopic
+// KafkaTopicSpec defines the desired state of a Kafka topic.
 type KafkaTopicSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	// The following markers will use OpenAPI v3 schema to validate the value
-	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
+	// Partitions is the number of partitions for the topic.
+	// +kubebuilder:validation:Minimum=1
+	Partitions int32 `json:"partitions"`
 
-	// foo is an example field of KafkaTopic. Edit kafkatopic_types.go to remove/update
-	// +optional
-	Foo *string `json:"foo,omitempty"`
+	// Replicas is the replication factor for the topic.
+	// +kubebuilder:validation:Minimum=1
+	Replicas int32 `json:"replicas"`
 }
 
 // KafkaTopicStatus defines the observed state of KafkaTopic.
 type KafkaTopicStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Partitions is the number of partitions in the topic.
+	// +optional
+	Partitions int32 `json:"partitions,omitempty"`
+
+	// Replicas is the replication factor of the topic.
+	// +optional
+	Replicas int32 `json:"replicas,omitempty"`
+
+	// Conditions provides information about the topic's current state.
+	// +optional
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
 // +kubebuilder:object:root=true

@@ -1,11 +1,81 @@
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    app.kubernetes.io/name: kafi
-    app.kubernetes.io/managed-by: kustomize
   name: manager-role
 rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  - secrets
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kafi.haunshila.com
+  resources:
+  - kafkas
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kafi.haunshila.com
+  resources:
+  - kafkas/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - kafka.kafi.haunshila.com
+  resources:
+  - kafkatopics
+  - kafkausers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kafka.kafi.haunshila.com
+  resources:
+  - kafkatopics/finalizers
+  - kafkausers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - kafka.kafi.haunshila.com
+  resources:
+  - kafkatopics/status
+  - kafkausers/status
+  verbs:
+  - get
+  - patch
+  - update

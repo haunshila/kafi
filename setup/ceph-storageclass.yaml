@@ -1,0 +1,10 @@
+# ceph-storageclass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: rook-ceph-block
+provisioner: rook-ceph.rbd.csi.ceph.com
+reclaimPolicy: Delete
+parameters:
+  clusterID: rook-ceph
+  pool: replicapool

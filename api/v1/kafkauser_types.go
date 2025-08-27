@@ -20,25 +20,48 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// KafkaUserSpec defines the desired state of KafkaUser
+// KafkaUserSpec defines the desired state of a KafkaUser.
 type KafkaUserSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	// The following markers will use OpenAPI v3 schema to validate the value
-	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
+	// Authentication specifies the user's authentication method.
+	// +kubebuilder:validation:Required
+	Authentication KafkaUserAuthenticationSpec `json:"authentication"`
 
-	// foo is an example field of KafkaUser. Edit kafkauser_types.go to remove/update
+	// Authorization defines the ACLs for the user.
 	// +optional
-	Foo *string `json:"foo,omitempty"`
+	Authorization KafkaUserAuthorizationSpec `json:"authorization,omitempty"`
+}
+
+// KafkaUserAuthenticationSpec defines the user authentication method.
+// +kubebuilder:validation:Enum=plain;scram-sha-512
+type KafkaUserAuthenticationType string
+
+type KafkaUserAuthenticationSpec struct {
+	Type KafkaUserAuthenticationType `json:"type"`
+}
+
+// KafkaUserAuthorizationSpec defines the user's ACLs.
+type KafkaUserAuthorizationSpec struct {
+	Acls []KafkaUserAcl `json:"acls"`
+}
+
+// KafkaUserAcl defines an access control list entry.
+type KafkaUserAcl struct {
+	// Topic is the topic the ACL applies to.
+	Topic string `json:"topic"`
+	// Operation is the allowed operation (e.g., READ, WRITE).
+	// +kubebuilder:validation:Enum=read;write;all
+	Operation string `json:"operation"`
 }
 
 // KafkaUserStatus defines the observed state of KafkaUser.
 type KafkaUserStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Conditions provides information about the user's current state.
+	// +optional
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+
+	// SecretRef is a reference to the Secret containing the user's credentials.
+	// +optional
+	SecretRef string `json:"secretRef,omitempty"`
 }
 
 // +kubebuilder:object:root=true

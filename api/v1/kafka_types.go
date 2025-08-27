@@ -17,28 +17,68 @@ limitations under the License.
 package v1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// KafkaSpec defines the desired state of Kafka
+// KafkaSpec defines the desired state of a Kafka cluster.
 type KafkaSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	// The following markers will use OpenAPI v3 schema to validate the value
-	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
+	// Replicas is the number of Kafka broker pods to run.
+	// +kubebuilder:validation:Minimum=1
+	// +kubebuilder:default:=3
+	Replicas int32 `json:"replicas"`
 
-	// foo is an example field of Kafka. Edit kafka_types.go to remove/update
-	// +optional
-	Foo *string `json:"foo,omitempty"`
+	// Version is the Kafka version to use.
+	// +kubebuilder:default:="3.5.0"
+	Version string `json:"version"`
+
+	// Storage defines the storage configuration for the Kafka brokers.
+	// +kubebuilder:validation:Required
+	Storage KafkaStorageSpec `json:"storage"`
+
+	// Listeners specifies the Kafka listeners.
+	Listeners []KafkaListenerSpec `json:"listeners"`
+
+	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets,omitempty"`
 }
 
 // KafkaStatus defines the observed state of Kafka.
 type KafkaStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Replicas is the number of ready Kafka broker pods.
+	Replicas int32 `json:"replicas"`
+
+	// Conditions provides information about the cluster's current state.
+	// +optional
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+
+	// BootstrapServers is the address to connect to the Kafka cluster.
+	BootstrapServers string `json:"bootstrapServers"`
+}
+
+// +kubebuilder:validation:Enum=persistent-claim;ephemeral
+type KafkaStorageType string
+
+// KafkaStorageSpec defines the storage configuration.
+type KafkaStorageSpec struct {
+	// StorageClassName is the name of the StorageClass to use for dynamic provisioning.
+	// This StorageClass must be configured to use the Ceph CSI driver.
+	StorageClassName string `json:"storageClassName"`
+
+	// Size is the requested size of the persistent volume.
+	// For example: "10Gi".
+	Size string `json:"size"`
+}
+
+// KafkaListenerSpec defines a Kafka listener.
+// +kubebuilder:validation:Enum=plain;tls
+type KafkaListenerType string
+
+type KafkaListenerSpec struct {
+	Type KafkaListenerType `json:"type"`
+	// Port is the port number for the listener.
+	// +kubebuilder:validation:Minimum=1
+	// +kubebuilder:validation:Maximum=65535
+	Port int32 `json:"port"`
 }
 
 // +kubebuilder:object:root=true

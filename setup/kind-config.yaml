@@ -1,0 +1,23 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: /tmp/rook-data/cp1
+        containerPath: /var/lib/rook
+  - role: control-plane
+    extraMounts:
+      - hostPath: /tmp/rook-data/cp2
+        containerPath: /var/lib/rookki
+  - role: worker
+    extraMounts:
+      - hostPath: /tmp/rook-data/worker1
+        containerPath: /var/lib/rook
+  - role: worker
+    extraMounts:
+      - hostPath: /tmp/rook-data/worker2
+        containerPath: /var/lib/rook
+  - role: worker
+    extraMounts:
+      - hostPath: /tmp/rook-data/worker3
+        containerPath: /var/lib/rook
