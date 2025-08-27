@@ -8,4 +8,32 @@ layout:
 - go.kubebuilder.io/v4
 projectName: kafi
 repo: github.com/haunshila/kafi
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kafi.haunshila.com
+  group: kafka
+  kind: Kafka
+  path: github.com/haunshila/kafi/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kafi.haunshila.com
+  group: kafka
+  kind: KafkaTopic
+  path: github.com/haunshila/kafi/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kafi.haunshila.com
+  group: kafka
+  kind: KafkaUser
+  path: github.com/haunshila/kafi/api/v1
+  version: v1
 version: "3"

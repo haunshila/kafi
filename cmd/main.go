@@ -36,6 +36,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics/filters"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+
+	kafkav1 "github.com/haunshila/kafi/api/v1"
+	"github.com/haunshila/kafi/internal/controller"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -47,6 +50,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
+	utilruntime.Must(kafkav1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -198,6 +202,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := (&controller.KafkaReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Kafka")
+		os.Exit(1)
+	}
+	if err := (&controller.KafkaTopicReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "KafkaTopic")
+		os.Exit(1)
+	}
+	if err := (&controller.KafkaUserReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "KafkaUser")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	if metricsCertWatcher != nil {

@@ -1,0 +1,6 @@
+## Append samples of your project ##
+resources:
+- kafka_v1_kafka.yaml
+- kafka_v1_kafkatopic.yaml
+- kafka_v1_kafkauser.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples
